@@ -8,19 +8,21 @@ import org.apache.spark.api.java.JavaSparkContext;
 import scala.Tuple2;
 
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Stream;
 
-public class TopWordCount {
+public class TopWordCountAWS {
 
     public static void main(String[] args) {
-        // Only for Windows
+        // Code to run on AWS EMR Instance
         System.setProperty("hadoop.home.dir", "C:/hadoop");
 
         // Below Program gives Top 10 highest word count occurrences from the big data (boring words filtered)
         Logger.getLogger("org.apache").setLevel(Level.WARN);
-        SparkConf conf = new SparkConf().setAppName("startingSpark").setMaster("local[*]");
+        SparkConf conf = new SparkConf().setAppName("startingSpark");
         try (JavaSparkContext sc = new JavaSparkContext(conf)) {
-            JavaRDD<String> initialRDD = sc.textFile("src/main/resources/subtitles/input.txt");
+            JavaRDD<String> initialRDD = sc.textFile("s3n://s3bucketname/input-spring.txt");
             List<Tuple2<Long, String>> sorted = initialRDD.map(s -> s.replaceAll("[^a-zA-Z\\s]", "").toLowerCase())
                     .filter(s-> s.trim().length() > 0)
                     .flatMap(s -> Arrays.asList(s.split(" ")).iterator())
