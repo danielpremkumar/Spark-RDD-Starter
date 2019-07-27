@@ -25,9 +25,9 @@ public class TopWordCount {
                     .filter(s-> s.trim().length() > 0)
                     .flatMap(s -> Arrays.asList(s.split(" ")).iterator())
                     .filter(s -> s.trim().length() > 0 && Util.isNotBoring(s))
-                    .mapToPair(word -> new Tuple2<String, Long>(word, 1L))
-                    .reduceByKey((val1, val2) -> val1 + val2)
-                    .mapToPair(pair -> new Tuple2<Long, String>(pair._2, pair._1))
+                    .mapToPair(word -> new Tuple2<>(word, 1L))
+                    .reduceByKey(Long::sum)
+                    .mapToPair(pair -> new Tuple2<>(pair._2, pair._1))
                     .sortByKey(false)
                     .take(10);
             sorted.forEach(System.out::println);
